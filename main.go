@@ -7,61 +7,55 @@ import (
 )
 
 const (
-	boardSize = 5
+	boardSize         = 5
 	numberOfResources = 5
 )
 
-var rows = [8]int {-1, -1, 0, 1, 1, 1, 0, -1}
-var cols = [8]int {0, 1, 1, 1, 0, -1, -1, -1}
+var rows = [8]int{-1, -1, 0, 1, 1, 1, 0, -1}
+var cols = [8]int{0, 1, 1, 1, 0, -1, -1, -1}
 
 type Resource struct {
-	terrain 	string
-	count		int
-	abbrev		rune
+	terrain string
+	count   int
 }
 
-func initBoard(gameBoard *[boardSize][boardSize]rune) {
+func initBoard(gameBoard *[boardSize][boardSize]string) {
 	// Sets the boundaries of the board for each row.
-	(*gameBoard)[0][0] = 'X'
-	(*gameBoard)[0][4] = 'X'
-	(*gameBoard)[1][0] = 'X'
-	(*gameBoard)[3][0] = 'X'
-	(*gameBoard)[4][0] = 'X'
-	(*gameBoard)[4][4] = 'X'
+	(*gameBoard)[0][0] = "X"
+	(*gameBoard)[0][4] = "X"
+	(*gameBoard)[1][0] = "X"
+	(*gameBoard)[3][0] = "X"
+	(*gameBoard)[4][0] = "X"
+	(*gameBoard)[4][4] = "X"
 
 	// Places the dessert hex in the middle of the board.
-	(*gameBoard)[2][2] = 'd'
+	(*gameBoard)[2][2] = "d"
 }
 
 func initResourceQueue(resouceQueue []Resource) []Resource {
-	forest := Resource {
+	forest := Resource{
 		terrain: "forest",
-		count: 4,
-		abbrev: 'f',
+		count:   4,
 	}
 
-	mountains := Resource {
+	mountains := Resource{
 		terrain: "mountain",
-		count: 3,
-		abbrev: 'm',
+		count:   3,
 	}
 
-	hills := Resource {
+	hills := Resource{
 		terrain: "hills",
-		count: 3,
-		abbrev: 'h',
+		count:   3,
 	}
 
-	fields := Resource {
+	fields := Resource{
 		terrain: "fields",
-		count: 4,
-		abbrev: 'i',
+		count:   4,
 	}
 
-	pasture := Resource {
+	pasture := Resource{
 		terrain: "pasture",
-		count: 4,
-		abbrev: 'p',
+		count:   4,
 	}
 
 	resouceQueue = append(resouceQueue, forest)
@@ -82,20 +76,18 @@ func dequeue(queue []Resource) []Resource {
 	return queue[1:]
 }
 
-func createGameBoard(gameBoard *[boardSize][boardSize]rune, resouceQueue *[]Resource) {
+func createGameBoard(gameBoard *[boardSize][boardSize]string, resouceQueue *[]Resource) {
 	startRow := 0
 	startCol := 0
-	result := backtrack(gameBoard, *resouceQueue, startRow, startCol)
-
-	fmt.Println(result)
+	backtrack(gameBoard, *resouceQueue, startRow, startCol)
 }
 
-func backtrack(gameBoard *[boardSize][boardSize]rune, resouceQueue []Resource, row int, col int) bool {
+func backtrack(gameBoard *[boardSize][boardSize]string, resouceQueue []Resource, row int, col int) bool {
 	if len(resouceQueue) == 0 {
 		return true
 	}
 
-	if gameBoard[row][col] == 'X' || gameBoard[row][col] == 'd' {
+	if gameBoard[row][col] == "X" || gameBoard[row][col] == "d" {
 		newCol := (col + 1) % boardSize
 		newRow := row
 
@@ -123,7 +115,7 @@ func backtrack(gameBoard *[boardSize][boardSize]rune, resouceQueue []Resource, r
 			}
 
 			if isValidMove(gameBoard, currentResource, row, col) {
-				(*gameBoard)[row][col] = currentResource.abbrev
+				(*gameBoard)[row][col] = currentResource.terrain
 
 				newCol := (col + 1) % boardSize
 				newRow := row
@@ -138,14 +130,14 @@ func backtrack(gameBoard *[boardSize][boardSize]rune, resouceQueue []Resource, r
 					return true
 				}
 
-				(*gameBoard)[row][col] = '0'
+				(*gameBoard)[row][col] = "0"
 			}
 
 			if currentResource.count == 0 {
 				currentResource.count += 1
 				resouceQueue = enqueue(resouceQueue, currentResource)
 			} else {
-				resouceQueue[len(resouceQueue) - 1].count += 1
+				resouceQueue[len(resouceQueue)-1].count += 1
 			}
 		}
 	}
@@ -153,11 +145,11 @@ func backtrack(gameBoard *[boardSize][boardSize]rune, resouceQueue []Resource, r
 	return false
 }
 
-func isValidMove(gameBoard *[boardSize][boardSize]rune, currentResource Resource, row int, col int) bool {
+func isValidMove(gameBoard *[boardSize][boardSize]string, currentResource Resource, row int, col int) bool {
 	for i := 0; i < len(rows); i++ {
 		newRow := row + rows[i]
 		newCol := col + cols[i]
-		if newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize && (*gameBoard)[newRow][newCol] == currentResource.abbrev {
+		if newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize && (*gameBoard)[newRow][newCol] == currentResource.terrain {
 			return false
 		}
 	}
@@ -167,12 +159,12 @@ func isValidMove(gameBoard *[boardSize][boardSize]rune, currentResource Resource
 
 func shuffleResources(resouceQueue []Resource) []Resource {
 	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(resouceQueue), func(i, j int) {resouceQueue[i], resouceQueue[j] = resouceQueue[j], resouceQueue[i]})
+	rand.Shuffle(len(resouceQueue), func(i, j int) { resouceQueue[i], resouceQueue[j] = resouceQueue[j], resouceQueue[i] })
 	return resouceQueue
 }
 
 func main() {
-	var gameBoard [boardSize][boardSize]rune
+	var gameBoard [boardSize][boardSize]string
 	var resouceQueue []Resource
 
 	initBoard(&gameBoard)
@@ -184,23 +176,14 @@ func main() {
 
 	for i := 0; i < boardSize; i++ {
 		for j := 0; j < boardSize; j++ {
-			fmt.Printf("%c ", gameBoard[i][j])
+			if gameBoard[i][j] != "X" {
+				if gameBoard[i][j] == "d" {
+					fmt.Print("desert ")
+				} else {
+					fmt.Printf("%s ", gameBoard[i][j])
+				}
+			}
 		}
 		fmt.Printf("\n")
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
