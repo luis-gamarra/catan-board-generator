@@ -88,12 +88,8 @@ func backtrack(gameBoard *[boardSize][boardSize]string, resouceQueue []Resource,
 	}
 
 	if gameBoard[row][col] == "X" || gameBoard[row][col] == "d" {
-		newCol := (col + 1) % boardSize
-		newRow := row
 
-		if newCol == 0 {
-			newRow += 1
-		}
+		newRow, newCol := updateRowAndCol(row, col)
 
 		foundAnswer := backtrack(gameBoard, resouceQueue, newRow, newCol)
 
@@ -117,12 +113,7 @@ func backtrack(gameBoard *[boardSize][boardSize]string, resouceQueue []Resource,
 			if isValidMove(gameBoard, currentResource, row, col) {
 				(*gameBoard)[row][col] = currentResource.terrain
 
-				newCol := (col + 1) % boardSize
-				newRow := row
-
-				if newCol == 0 {
-					newRow += 1
-				}
+				newRow, newCol := updateRowAndCol(row, col)
 
 				foundAnswer := backtrack(gameBoard, resouceQueue, newRow, newCol)
 
@@ -143,6 +134,17 @@ func backtrack(gameBoard *[boardSize][boardSize]string, resouceQueue []Resource,
 	}
 
 	return false
+}
+
+func updateRowAndCol(row, col int) (int, int) {
+	newCol := (col + 1) % boardSize
+	newRow := row
+
+	if newCol == 0 {
+		newRow += 1
+	}
+
+	return newRow, newCol
 }
 
 func isValidMove(gameBoard *[boardSize][boardSize]string, currentResource Resource, row int, col int) bool {
