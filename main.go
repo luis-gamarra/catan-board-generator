@@ -6,10 +6,7 @@ import (
 	"time"
 )
 
-const (
-	boardSize         = 5
-	numberOfResources = 5
-)
+const boardSize = 5
 
 var rows = [8]int{-1, -1, 0, 1, 1, 1, 0, -1}
 var cols = [8]int{0, 1, 1, 1, 0, -1, -1, -1}
