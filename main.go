@@ -30,9 +30,6 @@ func initBoard(gameBoard *[boardSize][boardSize]string) {
 	(*gameBoard)[3][0] = "X"
 	(*gameBoard)[4][0] = "X"
 	(*gameBoard)[4][4] = "X"
-
-	// Places the dessert hex in the middle of the board.
-	(*gameBoard)[2][2] = "d"
 }
 
 /*
@@ -64,11 +61,17 @@ func initResourceQueue(resouceQueue []Resource) []Resource {
 		count:   4,
 	}
 
+	desert := Resource{
+		terrain: "desert",
+		count:   1,
+	}
+
 	resouceQueue = append(resouceQueue, forest)
 	resouceQueue = append(resouceQueue, mountains)
 	resouceQueue = append(resouceQueue, hills)
 	resouceQueue = append(resouceQueue, fields)
 	resouceQueue = append(resouceQueue, pasture)
+	resouceQueue = append(resouceQueue, desert)
 
 	return resouceQueue
 }
@@ -115,7 +118,7 @@ func backtrack(gameBoard *[boardSize][boardSize]string, resouceQueue []Resource,
 		return true
 	}
 
-	if gameBoard[row][col] == "X" || gameBoard[row][col] == "d" {
+	if gameBoard[row][col] == "X" {
 
 		newRow, newCol := updateRowAndCol(row, col)
 
